@@ -1,0 +1,34 @@
+require('./bootstrap');
+
+import Vue from 'vue';
+
+import { InertiaApp } from '@inertiajs/inertia-vue';
+import { InertiaForm } from 'laravel-jetstream';
+import PortalVue from 'portal-vue';
+
+Vue.mixin({ methods: { route } });
+Vue.use(InertiaApp);
+Vue.use(InertiaForm);
+Vue.use(PortalVue);
+
+import moment from 'moment'
+
+moment.locale('pt-br')
+
+Vue.filter('formatDate', value => {
+    if (value) {
+        return moment(value).format('DD/MM/YYY HH:mm')
+    }
+});
+
+const app = document.getElementById('app');
+
+new Vue({
+    render: (h) =>
+        h(InertiaApp, {
+            props: {
+                initialPage: JSON.parse(app.dataset.page),
+                resolveComponent: (name) => require(`./Pages/${name}`).default,
+            },
+        }),
+}).$mount(app);
